@@ -33,7 +33,7 @@ typedef enum {
     SIGN_FOUND    = 0b100000000,
     CUR_VAL_ZERO  = 0b1000000000,
     ZERO_FOUND    = 0b10000000000,
-} FLAGSS;
+} PARSER_FLAGS;
 
 typedef enum {
     READ_ERR = 1,
