@@ -1,20 +1,20 @@
 
 #include <unistd.h>
 #include <pthread.h>
-#include <sys/time.h>
 #include <stdlib.h>
-///#include <stdio.h>
 
 const int ARRAY_SIZE = 1024 * 1024 * 16;
 
 enum ErrorCodes {
     WRONG_ARGS = 1,
     WRONG_THREADS,
+
 };
 
 typedef enum Direction {
     INCREASING,
-    DECREASING
+    DECREASING,
+    ALLOC_ERR
 } Direction;
 
 typedef struct thread_data {
@@ -38,8 +38,11 @@ int main(int argc, char** argv) {
         char mes[] = "Invalid number of arguments.\n";
         exit_err(WRONG_ARGS, mes, sizeof(mes));
     }
-
-    int* arr = (int*)malloc(ARRAY_SIZE * sizeof(int));   
+    int* arr = (int*)malloc(ARRAY_SIZE * sizeof(int));
+    if (arr == NULL) {
+        char mes[] = "Memory allocation error";
+        exit_err(ALLOC_ERR, mes, sizeof(mes));
+    }
     for (int i = 0; i < ARRAY_SIZE; ++i) {
         arr[i] = rand() % 100000;
     }
@@ -55,6 +58,7 @@ int main(int argc, char** argv) {
     }
     thread_data d = {arr, 0, ARRAY_SIZE, INCREASING, p_thr};
     bitsort(&d);
+    free(arr);
 }
 
 void exit_err(int code, char* mes, int mes_size) {
